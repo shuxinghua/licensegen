@@ -48,8 +48,6 @@ clang-quickstart/
 
 [cplusplus]([https://www.cplusplus.com/](https://www.cplusplus.com/))
 
-[C++ 教程 | 菜鸟教程](https://www.runoob.com/cplusplus/cpp-tutorial.html)
-
 [clang-tidy 文档](https://clang.llvm.org/extra/clang-tidy/)
 
 ## 三、  常见问题
