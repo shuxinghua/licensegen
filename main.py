@@ -14,10 +14,8 @@ from kivy.core.text import LabelBase
 
 # ========== 设置中文字体（兼容 Android/Windows/macOS/Linux）==========
 def register_fonts():
-    """在不同平台下注册合适的中文字体，避免闪退"""
     try:
         if platform == 'android':
-            # Android 系统字体路径（常见中文字体）
             android_fonts = [
                 '/system/fonts/NotoSansCJK-Regular.ttc',
                 '/system/fonts/NotoSansSC-Regular.otf',
@@ -31,16 +29,13 @@ def register_fonts():
                 except:
                     continue
         elif platform == 'win':
-            # Windows 使用微软雅黑
             LabelBase.register(name='Roboto', fn_regular='C:/Windows/Fonts/msyh.ttc')
         elif platform == 'macosx':
-            # macOS 使用苹方
             try:
                 LabelBase.register(name='Roboto', fn_regular='/System/Library/Fonts/PingFang.ttc')
             except:
                 LabelBase.register(name='Roboto', fn_regular='/System/Library/Fonts/STHeiti Light.ttc')
         else:
-            # Linux 等系统尝试常见中文字体
             linux_fonts = [
                 '/usr/share/fonts/truetype/droid/DroidSansFallback.ttf',
                 '/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc',
@@ -53,20 +48,16 @@ def register_fonts():
                 except:
                     continue
     except:
-        pass  # 如果注册失败，使用系统默认字体
+        pass
 
 register_fonts()
 
 # ========== 安全验证 ==========
-# 密码哈希值（原始密码：091201）
-# 使用 SHA256 哈希，避免硬编码明文密码
 PASSWORD_HASH = "0d8c0b8e7b3c9e8f4a2d6c5e1f7a9b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0"
 
 def validate_password(input_password):
-    """验证密码，使用哈希比对，避免明文存储"""
     if not input_password:
         return False
-    # 计算输入密码的哈希值并与预设哈希比对
     input_hash = hashlib.sha256(input_password.encode()).hexdigest()
     return input_hash == PASSWORD_HASH
 
@@ -112,7 +103,6 @@ class LicenseGeneratorLayout(BoxLayout):
         self.padding = dp(10)
         self.spacing = dp(5)
         
-        # 标题
         title = Label(
             text="注册码生成工具 v2.3",
             size_hint_y=0.07,
@@ -122,14 +112,7 @@ class LicenseGeneratorLayout(BoxLayout):
         )
         self.add_widget(title)
         
-        # 工具箱选择
-        self.add_widget(Label(
-            text="选择工具箱:",
-            size_hint_y=0.04,
-            font_size=sp(14),
-            halign='left'
-        ))
-        
+        self.add_widget(Label(text="选择工具箱:", size_hint_y=0.04, font_size=sp(14), halign='left'))
         self.toolbox_spinner = Spinner(
             text='请选择',
             values=get_display_names(),
@@ -139,14 +122,7 @@ class LicenseGeneratorLayout(BoxLayout):
         )
         self.add_widget(self.toolbox_spinner)
         
-        # 机器码输入
-        self.add_widget(Label(
-            text="用户机器码:",
-            size_hint_y=0.04,
-            font_size=sp(14),
-            halign='left'
-        ))
-        
+        self.add_widget(Label(text="用户机器码:", size_hint_y=0.04, font_size=sp(14), halign='left'))
         self.machine_input = TextInput(
             text='',
             size_hint_y=0.06,
@@ -156,41 +132,14 @@ class LicenseGeneratorLayout(BoxLayout):
         )
         self.add_widget(self.machine_input)
         
-        # 授权天数
-        self.add_widget(Label(
-            text="授权天数 (1-3650):",
-            size_hint_y=0.04,
-            font_size=sp(14),
-            halign='left'
-        ))
-        
-        self.days_input = TextInput(
-            text='365',
-            size_hint_y=0.06,
-            font_size=sp(14),
-            multiline=False,
-            input_filter='int'
-        )
+        self.add_widget(Label(text="授权天数 (1-3650):", size_hint_y=0.04, font_size=sp(14), halign='left'))
+        self.days_input = TextInput(text='365', size_hint_y=0.06, font_size=sp(14), multiline=False, input_filter='int')
         self.add_widget(self.days_input)
         
-        # 密码输入
-        self.add_widget(Label(
-            text="请输入口令:",
-            size_hint_y=0.04,
-            font_size=sp(14),
-            halign='left'
-        ))
-        
-        self.password_input = TextInput(
-            text='',
-            size_hint_y=0.06,
-            font_size=sp(14),
-            multiline=False,
-            password=True
-        )
+        self.add_widget(Label(text="请输入口令:", size_hint_y=0.04, font_size=sp(14), halign='left'))
+        self.password_input = TextInput(text='', size_hint_y=0.06, font_size=sp(14), multiline=False, password=True)
         self.add_widget(self.password_input)
         
-        # 生成按钮
         self.generate_btn = Button(
             text="生成注册码",
             size_hint_y=0.07,
@@ -200,7 +149,6 @@ class LicenseGeneratorLayout(BoxLayout):
         self.generate_btn.bind(on_press=self.generate_license)
         self.add_widget(self.generate_btn)
         
-        # 输出信息文本框（可滚动）
         self.output_text = TextInput(
             text='',
             size_hint_y=0.4,
@@ -211,40 +159,27 @@ class LicenseGeneratorLayout(BoxLayout):
         )
         self.add_widget(self.output_text)
         
-        # 状态栏
-        self.status_label = Label(
-            text="就绪",
-            size_hint_y=0.02,
-            font_size=sp(12),
-            color=(0.5, 0.5, 0.5, 1)
-        )
+        self.status_label = Label(text="就绪", size_hint_y=0.02, font_size=sp(12), color=(0.5, 0.5, 0.5, 1))
         self.add_widget(self.status_label)
     
     def validate_machine_code(self, code):
         if not code:
             return False, "机器码不能为空"
-        
         parts = code.split('-')
         if len(parts) != 4:
             return False, "格式应为 ABCD-EFGH-IJKL-MNOP"
-        
         for part in parts:
             if len(part) != 4:
                 return False, f"每段必须为4位: {part}"
-        
         return True, "格式正确"
     
     def generate_license(self, instance):
-        # 清空输出
         self.output_text.text = ''
-        
-        # 获取输入值
         toolbox_name = self.toolbox_spinner.text
         machine_code = self.machine_input.text.strip().upper()
         days_str = self.days_input.text.strip()
         password = self.password_input.text
         
-        # 验证
         if toolbox_name == '请选择':
             self.status_label.text = "错误: 请选择工具箱"
             self.status_label.color = (1, 0, 0, 1)
@@ -272,13 +207,11 @@ class LicenseGeneratorLayout(BoxLayout):
             self.status_label.color = (1, 0, 0, 1)
             return
         
-        # 生成注册码
         try:
             toolbox_code = get_toolbox_code(toolbox_name)
             reg_code = generate_regcode(toolbox_code, machine_code, days)
             reg_key = hashlib.md5(toolbox_code.encode()).hexdigest().upper()
             
-            # 构建输出文本
             output = []
             output.append("=" * 22)
             output.append("注册码生成工具")
@@ -304,9 +237,7 @@ class LicenseGeneratorLayout(BoxLayout):
             output.append("shuxinghua , 93535012@qq.com")
             output.append("=" * 22)
             
-            # 显示输出
             self.output_text.text = "\n".join(output)
-            
             self.status_label.text = "注册码生成成功!"
             self.status_label.color = (0, 0.7, 0, 1)
             
