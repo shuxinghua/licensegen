@@ -15,9 +15,8 @@ jobs:
         uses: ArtemSBulgakov/buildozer-action@v1
         id: buildozer
         with:
-          workdir: ./
           command: android debug
-          buildozer_cache_dir: /github/home/.buildozer
+          workdir: ./
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
