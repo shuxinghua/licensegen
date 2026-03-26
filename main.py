@@ -64,8 +64,8 @@ def validate_password(input_password):
 
 # ========== 全局工具箱信息 ==========
 _toolbox_list = [
-    {"code": "ForestAutomator", "name": "林业自动工具"},
-    {"code": "RasterGeneration", "name": "生成栅格文件"}
+    {"code": "ForestAutomator", "name": "自动处理图班属性"},
+    {"code": "RasterGeneration", "name": "批量生成专题栅格"}
 ]
 
 def get_toolbox_code(display_name):
@@ -230,7 +230,7 @@ class LicenseGeneratorLayout(BoxLayout):
             output.append("")
             output.append("-" * 36)
             output.append("授权文件存放位置：")
-            output.append(f"  1. %LOCALAPPDATA%\\ESRI_Licensing\\{toolbox_code}.lic")
+            output.append(f"  1. %LOCALAPPDATA%\\ESRI_Licensing\\ProLicensing\\{toolbox_code}.lic")
             output.append(f"  2. %APPDATA%\\ESRI\\ArcGISPro\\Licenses\\{toolbox_code}.lic")
             output.append("")
             output.append("注册表信息：")
