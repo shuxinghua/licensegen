@@ -53,7 +53,7 @@ def register_fonts():
 register_fonts()
 
 # ========== 安全验证 ==========
-PASSWORD_HASH = "0d8c0b8e7b3c9e8f4a2d6c5e1f7a9b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0"
+PASSWORD_HASH = "dc2ec75ff1bfcd8208738fe9014cbb2f8db458a73fed4cd68f8e118cd8199137"
 
 def validate_password(input_password):
     if not input_password:
