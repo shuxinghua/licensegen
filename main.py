@@ -7,6 +7,7 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.spinner import Spinner
 from kivy.uix.button import Button
+from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
 from kivy.metrics import dp, sp
 from kivy.utils import platform
@@ -149,11 +150,13 @@ class LicenseGeneratorLayout(BoxLayout):
         self.generate_btn.bind(on_press=self.generate_license)
         self.add_widget(self.generate_btn)
         
+        # ========== 可滚动的输出文本框 ==========
         self.output_text = TextInput(
             text='',
             size_hint_y=0.4,
             font_size=sp(13),
             readonly=True,
+            multiline=True,
             background_color=(0.95, 0.95, 0.95, 1),
             foreground_color=(0, 0, 0, 1)
         )
