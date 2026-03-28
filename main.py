@@ -12,6 +12,7 @@ from kivy.core.window import Window
 from kivy.metrics import dp, sp
 from kivy.utils import platform
 from kivy.core.text import LabelBase
+from kivy.graphics import Color, RoundedRectangle
 
 # ========== 设置中文字体（兼容 Android/Windows/macOS/Linux）==========
 def register_fonts():
@@ -64,8 +65,8 @@ def validate_password(input_password):
 
 # ========== 全局工具箱信息 ==========
 _toolbox_list = [
-    {"code": "ForestAutomator", "name": "自动处理图班属性"},
-    {"code": "RasterGeneration", "name": "批量生成专题栅格"}
+    {"code": "ForestAutomator", "name": "小班属性处理"},
+    {"code": "RasterGeneration", "name": "专题栅格生成"}
 ]
 
 def get_toolbox_code(display_name):
@@ -96,73 +97,153 @@ def generate_regcode(toolbox_code, machine_code, days):
     reg_code = base_signature + days_code
     return reg_code
 
+# ========== 自定义按钮（带圆角效果）==========
+class RoundedButton(Button):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.background_normal = ''
+        self.background_color = (0.2, 0.6, 1, 1)
+        self.bind(pos=self.update_canvas, size=self.update_canvas)
+        
+    def update_canvas(self, *args):
+        self.canvas.before.clear()
+        with self.canvas.before:
+            Color(*self.background_color)
+            RoundedRectangle(pos=self.pos, size=self.size, radius=[dp(8)])
+
 # ========== 主界面 ==========
 class LicenseGeneratorLayout(BoxLayout):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.orientation = 'vertical'
-        self.padding = dp(10)
-        self.spacing = dp(5)
+        self.padding = dp(8)
+        self.spacing = dp(3)
         
+        # ========== 标题（纯文字，无图标）==========
         title = Label(
             text="注册码生成工具 v2.3",
             size_hint_y=0.07,
             font_size=sp(20),
-            color=(0.2, 0.6, 1, 1),
+            color=(0.2, 0.6, 1, 1),  # 科技蓝
             bold=True
         )
         self.add_widget(title)
         
-        self.add_widget(Label(text="选择工具箱:", size_hint_y=0.04, font_size=sp(14), halign='left'))
+        # ========== 第1行：授权工具 + 天数（并排）==========
+        row1 = BoxLayout(orientation='horizontal', size_hint_y=0.07, spacing=dp(10))
+        
+        # 授权工具区域（占65%宽度）
+        tool_col = BoxLayout(orientation='vertical', size_hint_x=0.65, spacing=dp(2))
+        tool_col.add_widget(Label(text="授权工具:", size_hint_y=0.3, font_size=sp(11), halign='left'))
         self.toolbox_spinner = Spinner(
             text='请选择',
             values=get_display_names(),
-            size_hint_y=0.06,
-            font_size=sp(14),
+            size_hint_y=0.7,
+            font_size=sp(12),
             background_color=(0.8, 0.8, 0.8, 1)
         )
-        self.add_widget(self.toolbox_spinner)
+        tool_col.add_widget(self.toolbox_spinner)
         
-        self.add_widget(Label(text="用户机器码:", size_hint_y=0.04, font_size=sp(14), halign='left'))
+        # 天数区域（占35%宽度）
+        days_col = BoxLayout(orientation='vertical', size_hint_x=0.35, spacing=dp(2))
+        days_col.add_widget(Label(text="天数:", size_hint_y=0.3, font_size=sp(11), halign='left'))
+        self.days_input = TextInput(
+            text='365', 
+            size_hint_y=0.7, 
+            font_size=sp(12), 
+            multiline=False, 
+            input_filter='int',
+            hint_text='1-3650'
+        )
+        days_col.add_widget(self.days_input)
+        
+        row1.add_widget(tool_col)
+        row1.add_widget(days_col)
+        self.add_widget(row1)
+        
+        # ========== 第2行：机器码（单独一行）==========
+        row2 = BoxLayout(orientation='vertical', size_hint_y=0.07, spacing=dp(2))
+        row2.add_widget(Label(text="机器码:", size_hint_y=0.3, font_size=sp(11), halign='left'))
         self.machine_input = TextInput(
             text='',
-            size_hint_y=0.06,
-            font_size=sp(14),
+            size_hint_y=0.7,
+            font_size=sp(12),
             multiline=False,
             hint_text='ABCD-EFGH-IJKL-MNOP'
         )
-        self.add_widget(self.machine_input)
+        row2.add_widget(self.machine_input)
+        self.add_widget(row2)
         
-        self.add_widget(Label(text="授权天数 (1-3650):", size_hint_y=0.04, font_size=sp(14), halign='left'))
-        self.days_input = TextInput(text='365', size_hint_y=0.06, font_size=sp(14), multiline=False, input_filter='int')
-        self.add_widget(self.days_input)
+        # ========== 第3行：口令 + 生成按钮（并排）==========
+        row3 = BoxLayout(orientation='horizontal', size_hint_y=0.08, spacing=dp(10))
         
-        self.add_widget(Label(text="请输入口令:", size_hint_y=0.04, font_size=sp(14), halign='left'))
-        self.password_input = TextInput(text='', size_hint_y=0.06, font_size=sp(14), multiline=False, password=True)
-        self.add_widget(self.password_input)
+        # 口令区域（占55%宽度）
+        password_col = BoxLayout(orientation='vertical', size_hint_x=0.55, spacing=dp(2))
+        password_col.add_widget(Label(text="口令:", size_hint_y=0.3, font_size=sp(11), halign='left'))
+        self.password_input = TextInput(
+            text='', 
+            size_hint_y=0.7, 
+            font_size=sp(12), 
+            multiline=False, 
+            password=True,
+            hint_text=''
+        )
+        password_col.add_widget(self.password_input)
         
-        self.generate_btn = Button(
+        # 生成按钮（占45%宽度）
+        self.generate_btn = RoundedButton(
             text="生成注册码",
-            size_hint_y=0.07,
-            font_size=sp(16),
-            background_color=(0.2, 0.6, 1, 1)
+            size_hint_x=0.45,
+            size_hint_y=1.0,
+            font_size=sp(14),
+            color=(1, 1, 1, 1),
+            bold=True
         )
         self.generate_btn.bind(on_press=self.generate_license)
-        self.add_widget(self.generate_btn)
         
-        # ========== 可滚动的输出文本框 ==========
+        row3.add_widget(password_col)
+        row3.add_widget(self.generate_btn)
+        self.add_widget(row3)
+        
+        # ========== 可滚动的输出文本框（支持上下左右滚动）==========
+        output_scroll = ScrollView(
+            do_scroll_x=True,   # 启用横向滚动
+            do_scroll_y=True,   # 启用纵向滚动
+            size_hint_y=0.69,   # 最大化输出区域
+            scroll_type=['bars', 'content']
+        )
+        
         self.output_text = TextInput(
             text='',
-            size_hint_y=0.4,
-            font_size=sp(13),
+            size_hint_x=None,   # 宽度不按比例
+            size_hint_y=None,   # 高度不按比例
+            width=0,            # 初始宽度，后续会更新
+            height=0,           # 初始高度，后续会更新
+            font_size=sp(12),
             readonly=True,
             multiline=True,
             background_color=(0.95, 0.95, 0.95, 1),
-            foreground_color=(0, 0, 0, 1)
+            foreground_color=(0, 0, 0, 1),
+            selection_color=(0.3, 0.6, 1, 0.3),
+            cursor_color=(0.2, 0.6, 1, 1),
+            padding=(8, 8)
         )
-        self.add_widget(self.output_text)
         
-        self.status_label = Label(text="就绪", size_hint_y=0.02, font_size=sp(12), color=(0.5, 0.5, 0.5, 1))
+        # 关键：让文本框宽度和高度均自适应内容
+        self.output_text.bind(minimum_width=self.output_text.setter('width'))
+        self.output_text.bind(minimum_height=self.output_text.setter('height'))
+        
+        output_scroll.add_widget(self.output_text)
+        self.add_widget(output_scroll)
+        
+        # ========== 状态栏 ==========
+        self.status_label = Label(
+            text="就绪", 
+            size_hint_y=0.02, 
+            font_size=sp(10), 
+            color=(0.5, 0.5, 0.5, 1),
+            halign='left'
+        )
         self.add_widget(self.status_label)
     
     def validate_machine_code(self, code):
@@ -184,7 +265,7 @@ class LicenseGeneratorLayout(BoxLayout):
         password = self.password_input.text
         
         if toolbox_name == '请选择':
-            self.status_label.text = "错误: 请选择工具箱"
+            self.status_label.text = "错误: 请选择授权工具"
             self.status_label.color = (1, 0, 0, 1)
             return
         
@@ -216,19 +297,19 @@ class LicenseGeneratorLayout(BoxLayout):
             reg_key = hashlib.md5(toolbox_code.encode()).hexdigest().upper()
             
             output = []
-            output.append("=" * 22)
+            output.append("=" * 35)
             output.append("注册码生成工具")
-            output.append("=" * 22)
+            output.append("=" * 35)
             output.append(f"工具箱：{toolbox_name}")
             output.append(f"机器码：{machine_code}")
             output.append(f"授权天数：{days}")
-            output.append("-" * 36)
+            output.append("-" * 55)
             output.append("注册码生成成功！")
             output.append("")
             output.append("【注册码】")
             output.append(reg_code)
             output.append("")
-            output.append("-" * 36)
+            output.append("-" * 55)
             output.append("授权文件存放位置：")
             output.append(f"  1. %LOCALAPPDATA%\\ESRI_Licensing\\ProLicensing\\{toolbox_code}.lic")
             output.append(f"  2. %APPDATA%\\ESRI\\ArcGISPro\\Licenses\\{toolbox_code}.lic")
@@ -238,7 +319,7 @@ class LicenseGeneratorLayout(BoxLayout):
             output.append(f"  键名: {reg_key[:8]}-{reg_key[8:12]}-{reg_key[12:16]}-{reg_key[16:20]}-{reg_key[20:32]}")
             output.append("")
             output.append("shuxinghua , 93535012@qq.com")
-            output.append("=" * 22)
+            output.append("=" * 35)
             
             self.output_text.text = "\n".join(output)
             self.status_label.text = "注册码生成成功!"
