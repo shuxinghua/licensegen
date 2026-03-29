@@ -7,13 +7,12 @@ from kivy.uix.label import Label
 from kivy.uix.textinput import TextInput
 from kivy.uix.spinner import Spinner
 from kivy.uix.button import Button
-from kivy.uix.scrollview import ScrollView
 from kivy.core.window import Window
 from kivy.metrics import dp, sp
 from kivy.utils import platform
 from kivy.core.text import LabelBase
 
-# ========== 设置中文字体 ==========
+# ========== 设置中文字体（兼容 Android/Windows/macOS/Linux）==========
 def register_fonts():
     try:
         if platform == 'android':
@@ -104,7 +103,7 @@ class LicenseGeneratorLayout(BoxLayout):
         self.padding = dp(10)
         self.spacing = dp(5)
         
-        # 标题
+        # ========== 标题 ==========
         title = Label(
             text="注册码生成工具 v2.3",
             size_hint_y=0.07,
@@ -172,35 +171,20 @@ class LicenseGeneratorLayout(BoxLayout):
         row3.add_widget(self.generate_btn)
         self.add_widget(row3)
         
-        # ========== 输出区域：ScrollView + TextInput（关键修改）==========
-        # ScrollView 负责滚动
-        output_scroll = ScrollView(
-            do_scroll_x=False,
-            do_scroll_y=True,
-            size_hint_y=0.68
-        )
-        
-        # TextInput 禁用内部滚动，只负责显示和复制
+        # ========== 输出文本框（直接显示，支持长按复制）==========
         self.output_text = TextInput(
             text='',
-            size_hint_y=None,           # 高度自适应
-            height=0,
+            size_hint_y=0.68,
             font_size=sp(12),
             readonly=True,
             multiline=True,
-            do_scroll_y=False,           # 关键！禁用内部滚动
             background_color=(0.95, 0.95, 0.95, 1),
             foreground_color=(0, 0, 0, 1),
             selection_color=(0.3, 0.6, 1, 0.3),
             cursor_color=(0.2, 0.6, 1, 1),
             padding=(8, 8)
         )
-        
-        # 让文本框高度自适应内容
-        self.output_text.bind(minimum_height=self.output_text.setter('height'))
-        
-        output_scroll.add_widget(self.output_text)
-        self.add_widget(output_scroll)
+        self.add_widget(self.output_text)
         
         # ========== 状态栏 ==========
         self.status_label = Label(
@@ -262,30 +246,18 @@ class LicenseGeneratorLayout(BoxLayout):
             reg_code = generate_regcode(toolbox_code, machine_code, days)
             reg_key = hashlib.md5(toolbox_code.encode()).hexdigest().upper()
             
+            # 精简输出内容：无装饰线、无空行
             output = []
-            output.append("=" * 35)
-            output.append("注册码生成工具")
-            output.append("=" * 35)
-            output.append(f"工具箱：{toolbox_name}")
-            output.append(f"机器码：{machine_code}")
-            output.append(f"授权天数：{days}")
-            output.append("-" * 55)
-            output.append("注册码生成成功！")
-            output.append("")
+            output.append("【授权文件信息】")
+            output.append(f"%LOCALAPPDATA%\\ESRI_Licensing\\ProLicensing\\")
+            output.append(f"%APPDATA%\\ESRI\\ArcGISPro\\Licenses\\")
+            output.append(f"文件名：{toolbox_code}.lic")
+            output.append("【注册表信息】")
+            output.append("HKEY_CURRENT_USER\\Software\\ESRI\\ArcGISPro\\Licenses")
+            output.append(f"键名: {reg_key[:8]}-{reg_key[8:12]}-{reg_key[12:16]}-{reg_key[16:20]}-{reg_key[20:32]}")
             output.append("【注册码】")
             output.append(reg_code)
-            output.append("")
-            output.append("-" * 55)
-            output.append("授权文件存放位置：")
-            output.append(f"  1. %LOCALAPPDATA%\\ESRI_Licensing\\ProLicensing\\{toolbox_code}.lic")
-            output.append(f"  2. %APPDATA%\\ESRI\\ArcGISPro\\Licenses\\{toolbox_code}.lic")
-            output.append("")
-            output.append("注册表信息：")
-            output.append("  路径: HKEY_CURRENT_USER\\Software\\ESRI\\ArcGISPro\\Licenses")
-            output.append(f"  键名: {reg_key[:8]}-{reg_key[8:12]}-{reg_key[12:16]}-{reg_key[16:20]}-{reg_key[20:32]}")
-            output.append("")
-            output.append("shuxinghua , 93535012@qq.com")
-            output.append("=" * 35)
+            output.append("          shuxinghua , 93535012@qq.com")
             
             self.output_text.text = "\n".join(output)
             self.status_label.text = "注册码生成成功!"
