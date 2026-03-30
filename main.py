@@ -131,7 +131,7 @@ class LicenseGeneratorLayout(BoxLayout):
             font_size=sp(12), 
             multiline=False, 
             input_filter='int',
-            padding=(dp(9), dp(3))  # 减小上下内边距，文字更居中
+            padding=(dp(8), dp(8))  # 减小上下内边距，文字更居中
         )
         self.days_input.text = '365'
         row1.add_widget(self.days_input)
@@ -146,7 +146,7 @@ class LicenseGeneratorLayout(BoxLayout):
             font_size=sp(12),
             multiline=False,
             hint_text='ABCD-EFGH-IJKL-MNOP',
-            padding=(dp(9), dp(3))
+            padding=(dp(8), dp(8))
         )
         row2.add_widget(self.machine_input)
         self.add_widget(row2)
@@ -160,7 +160,7 @@ class LicenseGeneratorLayout(BoxLayout):
             font_size=sp(12), 
             multiline=False, 
             password=True,
-            padding=(dp(9), dp(3))
+            padding=(dp(8), dp(8))
         )
         self.password_input.hint_text='请输入...'
         row3.add_widget(self.password_input)
@@ -259,12 +259,12 @@ class LicenseGeneratorLayout(BoxLayout):
             output.append(f"工具箱：{toolbox_name}")
             output.append(f"机器码：{machine_code}")
             output.append(f"授权天数：{days}")
-            output.append("-" * 55)
+            output.append("-" * 63)
             output.append("")
             output.append("【注册码】")
             output.append(reg_code)
             output.append("")
-            output.append("-" * 55)
+            output.append("-" * 63)
             output.append("【授权文件信息】")
             output.append(f"%LOCALAPPDATA%\\ESRI_Licensing\\ProLicensing\\")
             output.append(f"%APPDATA%\\ESRI\\ArcGISPro\\Licenses\\")
@@ -273,9 +273,9 @@ class LicenseGeneratorLayout(BoxLayout):
             output.append("【注册表信息】")
             output.append("HKEY_CURRENT_USER\\Software\\ESRI\\ArcGISPro\\Licenses")
             output.append(f"键名: {reg_key[:8]}-{reg_key[8:12]}-{reg_key[12:16]}-{reg_key[16:20]}-{reg_key[20:32]}")
-            output.append("")
-            output.append("          shuxinghua , 93535012@qq.com")
-            output.append(f"             {date_str}")
+            output.append("-" * 63)
+            output.append("                  shuxinghua , 93535012@qq.com")
+            output.append(f"                     {date_str}")
             output.append("=" * 35)
             
             self.output_text.text = "\n".join(output)
