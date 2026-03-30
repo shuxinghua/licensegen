@@ -101,11 +101,11 @@ class LicenseGeneratorLayout(BoxLayout):
         super().__init__(**kwargs)
         self.orientation = 'vertical'
         self.padding = dp(10)
-        self.spacing = dp(3)  # 减小间距，更紧凑
+        self.spacing = dp(3) 
         
         # ========== 标题 ==========
         title = Label(
-            text="注册码生成工具 v2.3",
+            text="注册码生成工具_sxh",
             size_hint_y=0.07,
             font_size=sp(20),
             color=(0.2, 0.6, 1, 1),
@@ -113,7 +113,7 @@ class LicenseGeneratorLayout(BoxLayout):
         )
         self.add_widget(title)
         
-        # ========== 第1行：授权工具 + 天数（高度降低）==========
+        # ========== 第1行：授权工具 + 天数==========
         row1 = BoxLayout(orientation='horizontal', size_hint_y=0.05, spacing=dp(10))
         row1.add_widget(Label(text="授权工具:", size_hint_x=0.2, font_size=sp(12)))
         self.toolbox_spinner = Spinner(
@@ -126,18 +126,18 @@ class LicenseGeneratorLayout(BoxLayout):
         row1.add_widget(self.toolbox_spinner)
         row1.add_widget(Label(text="天数:", size_hint_x=0.12, font_size=sp(12)))
         self.days_input = TextInput(
-            text='365', 
+            hint_text='1-3650',
             size_hint_x=0.28, 
             font_size=sp(12), 
             multiline=False, 
             input_filter='int',
-            hint_text='1-3650',
-            padding=(dp(8), dp(4))  # 减小上下内边距，文字更居中
+            padding=(dp(9), dp(3))  # 减小上下内边距，文字更居中
         )
+        self.days_input.text = '365'
         row1.add_widget(self.days_input)
         self.add_widget(row1)
         
-        # ========== 第2行：机器码（高度降低）==========
+        # ========== 第2行：机器码 ==========
         row2 = BoxLayout(orientation='horizontal', size_hint_y=0.05, spacing=dp(10))
         row2.add_widget(Label(text="机器码:", size_hint_x=0.2, font_size=sp(12)))
         self.machine_input = TextInput(
@@ -146,13 +146,13 @@ class LicenseGeneratorLayout(BoxLayout):
             font_size=sp(12),
             multiline=False,
             hint_text='ABCD-EFGH-IJKL-MNOP',
-            padding=(dp(8), dp(4))
+            padding=(dp(9), dp(3))
         )
         row2.add_widget(self.machine_input)
         self.add_widget(row2)
         
-        # ========== 第3行：口令 + 按钮（高度降低）==========
-        row3 = BoxLayout(orientation='horizontal', size_hint_y=0.06, spacing=dp(10))
+        # ========== 第3行：口令 + 按钮 ==========
+        row3 = BoxLayout(orientation='horizontal', size_hint_y=0.05, spacing=dp(10))
         row3.add_widget(Label(text="口令:", size_hint_x=0.2, font_size=sp(12)))
         self.password_input = TextInput(
             text='', 
@@ -160,8 +160,9 @@ class LicenseGeneratorLayout(BoxLayout):
             font_size=sp(12), 
             multiline=False, 
             password=True,
-            padding=(dp(8), dp(4))
+            padding=(dp(9), dp(3))
         )
+        self.password_input.hint_text='请输入...'
         row3.add_widget(self.password_input)
         
         self.generate_btn = Button(
@@ -175,10 +176,10 @@ class LicenseGeneratorLayout(BoxLayout):
         row3.add_widget(self.generate_btn)
         self.add_widget(row3)
         
-        # ========== 输出文本框（高度增加）==========
+        # ========== 输出文本框==========
         self.output_text = TextInput(
             text='',
-            size_hint_y=0.74,  # 从 0.68 增加到 0.74
+            size_hint_y=0.74, 
             font_size=sp(12),
             readonly=True,
             multiline=True,
@@ -193,7 +194,7 @@ class LicenseGeneratorLayout(BoxLayout):
         # ========== 状态栏 ==========
         self.status_label = Label(
             text="就绪", 
-            size_hint_y=0.02, 
+            size_hint_y=0.03, 
             font_size=sp(10), 
             color=(0.5, 0.5, 0.5, 1),
             halign='left'
@@ -249,6 +250,7 @@ class LicenseGeneratorLayout(BoxLayout):
             toolbox_code = get_toolbox_code(toolbox_name)
             reg_code = generate_regcode(toolbox_code, machine_code, days)
             reg_key = hashlib.md5(toolbox_code.encode()).hexdigest().upper()
+            date_str = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             
             output = []
             output.append("=" * 35)
@@ -273,6 +275,7 @@ class LicenseGeneratorLayout(BoxLayout):
             output.append(f"键名: {reg_key[:8]}-{reg_key[8:12]}-{reg_key[12:16]}-{reg_key[16:20]}-{reg_key[20:32]}")
             output.append("")
             output.append("          shuxinghua , 93535012@qq.com")
+            output.append(f"             {date_str}")
             output.append("=" * 35)
             
             self.output_text.text = "\n".join(output)
