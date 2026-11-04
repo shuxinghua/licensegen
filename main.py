@@ -60,7 +60,7 @@ def validate_password(input_password):
 
 # ========== 工具箱清单（与 C# 版一致） ==========
 _toolbox_list = [
-    {"code": "ForestProcessor",  "name": "林业自动处理平台"},
+    {"code": "ForestProcessor",  "name": "自动处理平台"},
     {"code": "ForestAutomator",  "name": "小班属性处理"},
     {"code": "RasterGeneration", "name": "专题栅格生成"}
 ]
